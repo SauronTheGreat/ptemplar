@@ -1,0 +1,195 @@
+<%#TODO:the content in the section should be draggable and resizable. and its position and size must be stored(use markup coloumn in pcontents table)  %>
+
+<script type="text/javascript">
+    $(function () {
+        $(".operations_buttons").hide();
+
+        $(".edit_button").click(function () {
+
+            $.get("/pslides/" + $(this).attr("id") + "/edit", function (data) {
+                $("#edit_form .modal-body").html(data);
+            });
+
+        });
+
+        $("select").change(function () {
+            var target_id = $(this).attr("id").split("_")[2];
+            $("#" + target_id).next().children(2).css("font-size", $(".font_size").val() + "px");
+            $("#" + target_id).next().children(2).css("font-weight", $(".font_weight").val());
+            $("#" + target_id).next().children(2).css("font-family", $(".font_family").val());
+        });
+
+
+        $("#form_edit").click(function () {
+            $(".font_form").toggle();
+
+        });
+
+    });
+
+</script>
+
+
+
+
+<div id="pslide_display_back" style="background-color: <%= @pslide.background %>;opacity:<%= @pslide.opacity %>;">
+
+
+</div>
+<div id="pslide_display">
+  <div>
+
+    <% @pslide.ptemplate.psections.each_with_index do |section, index| %>
+
+        <% if section.pcontents.where('pslide_id=?', @pslide.id).blank? %>
+            <% if section.pwidget.name!="Sub-Ptemplate" %>
+                <div class="no_pcontents" style="text-align: center;position: absolute;border-radius: 5px;border:1px solid black;left:<%= section.xpos %>px;top:<%= section.ypos %>px;height:<%= section.height %>px;width:<%= section.width %>px">
+                  <a href="#add_content_form_<%= index %>" data-toggle="modal" data-backdrop="static" class="btn btn-info" style="font-weight: bolder;font-size: 18px;margin-top: <%= section.height/2-18 %>px;">
+                    + <%= section.pwidget.name %>
+                  </a>
+                </div>
+                <div id="add_content_form_<%= index %>" class="modal hide fade" style="z-index: 99999; width:80%; height:80%; margin-left: -40%;">
+                  <div class="modal-header">
+                    <a class="close" data-dismiss="modal"> &times; </a>
+                    <% @pcontent[index]=Pcontent.new %>
+                    <h2>Add <%= section.pwidget.name %></h2>
+                  </div>
+
+                  <%= form_for(@pcontent[index]) do |f| %>
+                      <div class="modal-body">
+                        <div class="clearfix">
+                          <%= f.hidden_field :psection_id, :value => section.id %>
+                          <%= f.hidden_field :pslide_id, :value => @pslide.id %>
+                          <div class="input">
+                            <%= render :inline => section.pwidget.builder, :locals => {:f => f, :index => index} %>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <div>
+                          <%= f.submit "Submit", :class => "btn btn-warning btn-large" %>
+                        </div>
+
+                  <% end %>
+                  </div>
+                </div>
+            <% end %>
+        <% else %>
+
+            <% @matter=@pslide.pcontents.where('psection_id=?', section).first %>
+            <% @matter_background=@matter.background %>
+            <% @matter_color=@matter.color %>
+            <div id="<%= @matter.id %>" class="colored_div" style="border:1px solid black;border-radius:<%= [section.width/30,10].min %>px;background-color:<%= @matter_background %>;position: absolute;left:<%= section.xpos %>px;top:<%= section.ypos %>px;height:<%= section.height %>px;width:<%= section.width %>px">
+            </div>
+            <div style="color:<%= @matter_color %>;padding:2px;position: absolute;left:<%= section.xpos %>px;top:<%= section.ypos %>px;height:<%= section.height %>px;width:<%= section.width %>px">
+
+              <div class="operations_buttons">
+                <!--Buttons which appear in the box..-->
+                <!--This is button to delete the pcontent-->
+                <div class="animation_buttons">
+                  <%= link_to "X", @matter, confirm: 'Are you sure?', method: :delete, :class => "btn btn-danger", :style => "position:relative;bottom:30px;left:0" %>
+
+
+                  <!--button to add entry behavior-->
+
+                  <a href="#add_behavior_form_<%= index %>" data-toggle="modal" data-backdrop="static" class="btn btn-info" style="position:relative;bottom:30px">
+                    EN
+                  </a>
+                  <!--button to add animate behavior-->
+                  <a href="#add_animate_form_<%= index %>" data-toggle="modal" data-backdrop="static" class="btn btn-warning animate_button" style="position:relative;bottom:30px">
+                    AN
+                  </a>
+
+                  <!--button to add exit behavior-->
+                  <a href="#add_behavior_form_<%= index %>" data-toggle="modal" data-backdrop="static" class="btn btn-success" style="position:relative;bottom:30px">
+                    EX
+                  </a>
+                </div>
+                <!--color picker to set background color of the pcontent box-->
+                <div class="font_buttons">
+                <a href="#" class="input-append color section_color" id="background_<%= @matter.id %>" data-color="<%= @matter_background %>" data-color-format="rgba" style="position: absolute;right:30px;bottom:-5px;" title="Set Background Color">
+
+                  <div class="add-on">
+                    <i style="background-color: <%= @matter_background %>;"></i>
+                  </div>
+                </a>
+                <!--text -->
+                <% unless GlobalConstants::WIDGETS_WITHOUT_TEXT.include?(@matter.psection.pwidget.name.downcase) %>
+
+
+                    <a href="#" class="input-append color text_color" id="text_<%= @matter.id %>" data-color="<%= @matter_color %>" data-color-format="rgb" style="position: absolute;right: 60px;bottom:-5px;" title="Set Text Color">
+                      <div class="add-on">
+                        <i style="background-color: <%= @matter_color %>;" class="hello"></i>
+                      </div>
+                    </a>
+
+                    <div style="padding-left: 30%;position: relative;top:-40px">
+                      <%= select_tag :font_size, options_for_select(30..100, @matter.font_size), :class => 'input-small font_size', :id => "font_size_#{@matter.id}" %>
+
+                      <%= select_tag :font_family, options_for_select(['Arial', 'Times New Roman'], @matter.font_family), :class => 'input-small font_family', :id => "font_family_#{@matter.id}" %>
+
+                      <%= select_tag :font_weight, options_for_select(['Bold', 'Italic', 'Normal'], @matter.font_weight), :class => 'input-small font_weight', :id => "font_weight_#{@matter.id}" %>
+
+                    </div>
+                <% end %>
+                </div>
+                <!--end of buttons-->
+
+                <!--*********************************************************************-->
+
+                <div id="add_behavior_form_<%= index %>" class="modal hide fade" style="z-index: 99999">
+                  <div class="modal-header">
+                    <a class="close" data-dismiss="modal"> &times; </a>
+
+                    <h2>Behavior</h2>
+                  </div>
+                  <div class="modal-body">
+                    <%= render 'pbehaviors/form', :locals => {:pcontent_id => @matter.id, :animate => false} %>
+                  </div>
+                  <div class="modal-footer">
+                    <div>
+                      <%#= f.submit "Submit", :class => "btn btn-warning btn-large" %>
+                    </div>
+                  </div>
+                  <% #end               %>
+                </div>
+
+                <!--*********************************************************************-->
+
+                <div id="add_animate_form_<%= index %>" class="modal hide fade" style="z-index: 99999">
+                  <div class="modal-header">
+                    <a class="close" data-dismiss="modal"> &times; </a>
+
+                    <h2>Animate Configuration</h2>
+                  </div>
+                  <div class="modal-body">
+                    <%= render 'pbehaviors/form', :locals => {:pcontent_id => @matter.id, :animate => true} %>
+                  </div>
+                  <div class="modal-footer">
+                    <div>
+                      <%#= f.submit "Submit", :class => "btn btn-warning btn-large" %>
+                    </div>
+                  </div>
+                  <% #end               %>
+                </div>
+              </div>
+
+
+              <% @psection=section %>
+              <% @widget=@matter.psection.pwidget %>
+              <% @behavior="flat" %>
+              <% @renderer = "<"+"%= render_cell :#{@widget.name.downcase},
+                                                :#{@behavior},
+                                                :pcontents => @matter,
+                                                :width => @psection.width,
+                                                :height => @psection.height %"+">" %>
+
+
+              <%= render :inline => @renderer %>
+            </div>
+        <% end %>
+    <% end %>
+
+
+  </div>
+</div>

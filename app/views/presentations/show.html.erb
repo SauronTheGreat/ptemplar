@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>User:</b>
+  <%= @presentation.user_id %>
+</p>
+
+<p>
+  <b>Name:</b>
+  <%= @presentation.name %>
+</p>
+
+<p>
+  <b>Background:</b>
+  <%= @presentation.background_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_presentation_path(@presentation) %> |
+<%= link_to 'Back', presentations_path %>

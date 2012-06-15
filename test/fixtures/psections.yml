@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  ptemplate_id: 1
+  pwidget_id: 1
+  markup: MyText
+
+two:
+  ptemplate_id: 1
+  pwidget_id: 1
+  markup: MyText

@@ -1,0 +1,21 @@
+<%= form_for(@pevent) do |f| %>
+  <% if @pevent.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@pevent.errors.count, "error") %> prohibited this pevent from being saved:</h2>
+
+      <ul>
+      <% @pevent.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

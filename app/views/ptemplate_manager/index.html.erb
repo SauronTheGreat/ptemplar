@@ -1,0 +1,92 @@
+<style type="text/css">
+  .row{
+      background-color: #ffebcd;
+  }
+
+</style>
+
+
+<div class="row">
+  <div class="span12">
+    <h1>Here is what you have done till now:</h1>
+    <br>
+    <br>
+    <h4><%= link_to "I hate my self ! Delete everything!!", delete_all_ptemplates_path, :class => "btn btn-danger" %></h4>
+    <br>
+    <br>
+    <h4><%= link_to "try one...", new_ptemplate_path, :class => "btn btn-warning" %></h4>
+    <br>
+    <br>
+
+    <table class="table table-striped table-bordered table-condensed">
+      <tr>
+        <td>
+          Ptemplate Name
+        </td>
+        <td colspan="3">
+        </td>
+
+      </tr>
+
+      <% @ptemplates.each do |ptemplate| %>
+          <tr>
+            <td align="center">
+              <%#= link_to ptemplate.name, customize_ptemplate_path(ptemplate) %>
+                  <div class="field" style="float:left;margin-right: 10px;">
+                    <%= ptemplate.name %>
+                    <div class="mini-slide" style="background: <%= ptemplate.background %>">
+                      <% ptemplate.psections.each do |section| %>
+                          <div style="background-color:<%= section.background %> ;line-height: 10px;border-radius: 2px;text-align:center;font-size:10px;padding:0px;border:solid 1px;;position:absolute;left:<%=section.xpos.to_i/5%>px;top:<%= section.ypos.to_i/5 %>px;width:<%= section.width.to_i/5 %>px;height:<%= section.height.to_i/ 5 %>px">
+                            <div style="margin-top: 3px;"><%= section.pwidget.name %></div>
+                          </div>
+                      <% end %>
+                    </div>
+                  </div>
+            </td>
+            <td>
+              <br>
+              <%= link_to "Adore your creation !!", customize_ptemplate_path(ptemplate), :class => "btn btn-inverse index_button" %>
+            </td>
+
+            <td>
+              <br>
+              <a class="btn btn-success index_button" data-toggle="modal" href="#edit_ptemplate_modal_<%= ptemplate.id %>">Lets
+                Rename
+                it !!</a>
+
+            </td>
+            <td>
+              <br>
+              <%= link_to "I hate it !!", delete_ptemplate_path(ptemplate), :class => "btn btn-danger index_button", :method => :delete, :confirm => "You really do ??" %>
+            </td>
+
+
+            <!--modal to rename the ptemplate!!-->
+            <div class="modal fade" id="edit_ptemplate_modal_<%= ptemplate.id %>" style="z-index:10000;">
+              <div class="modal-header">
+                <a class="close" data-dismiss="modal">×</a>
+
+                <h3>Rename it !!</h3>
+              </div>
+              <div class="modal-body">
+                <%= form_tag :action => 'save_ptemplate' do %>
+
+                    <%= hidden_field_tag :ptemplate_id, ptemplate.id %>
+                    <%= hidden_field_tag :from_index, 1 %>
+                    <%= label_tag :name %>
+                    <%= text_field_tag :name, ptemplate.name %>
+
+
+                    </div>
+                    <div class="modal-footer">
+                      <%= submit_tag "SAVE", :class => "btn btn-info" %>
+                <% end %>
+                <a href="#" class="btn btn-danger" data-dismiss="modal">Close</a>
+                </div>
+                </div>
+
+      <% end %>
+      </tr>
+    </table>
+  </div>
+</div>

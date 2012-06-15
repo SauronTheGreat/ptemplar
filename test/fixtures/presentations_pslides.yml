@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  presentation_id: 1
+  pslide_id: 1
+  sequence_number: 1
+
+two:
+  presentation_id: 1
+  pslide_id: 1
+  sequence_number: 1

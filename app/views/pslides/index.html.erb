@@ -1,0 +1,29 @@
+<h1>Listing pslides</h1>
+
+<table>
+  <tr>
+    <th>User</th>
+    <th>Background</th>
+    <th>Foreground</th>
+    <th>In blank</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @pslides.each do |pslide| %>
+  <tr>
+    <td><%= pslide.user_id %></td>
+    <td><%= pslide.background_id %></td>
+    <td><%= pslide.foreground_id %></td>
+    <td><%= pslide.in_blank %></td>
+    <td><%= link_to 'Show', pslide %></td>
+    <td><%= link_to 'Edit', edit_pslide_path(pslide) %></td>
+    <td><%= link_to 'Destroy', pslide, confirm: 'Are you sure?', method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Pslide', new_pslide_path %>

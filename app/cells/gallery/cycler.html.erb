@@ -1,0 +1,24 @@
+<link href="/assets/pslidecss/presentationCycle.css" media="screen" rel="stylesheet" type="text/css"/>
+<script src="/assets/pslidejs/jquery.cycle.all.min.js" type="text/javascript"></script>
+<script src="/assets/pslidejs/presentationCycle.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(function () {
+        presentationCycle.init();
+    });
+</script>
+<div id="presentation_container" class="pc_container">
+  <% @pdata.photos.each do |photo| %>
+      <div class="pc_item">
+        <div class="desc" style="color:white;">
+          <h1>Server Park</h1>
+          Consectetur adipiscing elit. Nunc quis tellus eros.
+          Nam blandit diam id turpis bibendum nec rutrum dui pulvinar. Quisque fermentum,
+          dolor ut adipiscing suscipit, leo lorem malesuada mauris, vitae dapibus mi
+          ligula ut nunc.
+        </div>
+        <img src="<%= photo.image %>" style="max-height:200px;max-width:600px;"/>
+      </div>
+  <% end %>
+
+</div>
+

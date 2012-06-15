@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ptemplar</title>
+  <%= stylesheet_link_tag "application" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+  <%= yield(:head) %>
+</head>
+<body>
+<div id="wrapper">
+  <div class="navbar navbar-fixed-top" style="">
+    <div class="navbar-inner" style="height:40px">
+      <div class="container-fluid">
+        <%= link_to "Ptemplar",root_path,:class=>"brand" %>
+        <ul class="nav">
+          <!--<li><a href="#contact" style="color:white;">Contact</a></li>-->
+        </ul>
+
+        <% if !user_signed_in? %>
+            <%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => {:class => "pull-right navbar-form"}) do |f| %>
+                <%= f.email_field :email, :class => "input-small span3", :placeholder => "Email" %>
+                <%= f.password_field :password, :class => "input-small span2", :placeholder => "Password" %>
+                <%= f.submit "Sign In", :class => "btn-info btn" %>
+            <% end %>
+        <% else %>
+            <div class="pull-right" style="margin-top: 10px;color:white;">
+              <%= current_user.email %>
+              <span class="nav_link">
+              | <%= link_to "Sign out", destroy_user_session_path, :method => :delete, :style => "color:white;" %>
+            </span>
+            </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <%= yield %>
+  </div>
+</div>
+
+
+</body>
+</html>
+
+
+

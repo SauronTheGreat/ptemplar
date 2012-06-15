@@ -1,0 +1,80 @@
+<%#this is the place where we have form for font and colors.  %>
+<%#TODO: remove the modal and make an inline form.  %>
+
+
+<script type="text/javascript">
+    $(function () {
+
+        $("select").change(function(){
+
+         var target_id=$(this).attr("id").split("_")[2];
+          $("#text_"+target_id).css("font-size",$(".font_size").val()+"px");
+          $("#text_"+target_id).css("font-weight",$(".font_weight").val());
+          $("#text_"+target_id).css("font-family",$(".font_family").val());
+
+
+
+
+        })  ;
+
+        //this is the code for activating the font color picker and
+        //changing the required hidden fields...
+        $('.text_color').colorpicker().on('changeColor', function (ev) {
+
+            $("#text_" + $(this).attr("id")).css("color", ev.color.toHex());
+            var alpha = ev.color.value.a;
+            $("#text_" + $(this).attr("id")).css("opacity", alpha);
+            $('#font_color_' + $(this).attr("id")).attr("value", $("#text_" + $(this).attr("id")).css("color"));
+            $('#font_opacity_' + $(this).attr("id")).attr("value", $("#text_" + $(this).attr("id")).css("opacity"));
+
+        });
+
+        //this is the code for activating the section background color picker and
+        //changing the required hidden fields...
+        $('.section_color').colorpicker().on('changeColor', function (ev) {
+
+            $(this).parents("#selection").css("background-color", ev.color.toHex());
+            var alpha = ev.color.value.a;
+            $('#background_color_' + $(this).attr("id")).attr("value", $(this).parents("#selection").css("background-color"));
+            $('#background_opacity_' + $(this).attr("id")).attr("value", $(this).parents("#selection").css("opacity"));
+        });
+
+
+    });
+</script>
+
+<% @matter=Psection.find(id) %>
+
+<div class='design_buttons'>
+  <a id="<%= @matter.id %>" href='#' class='input-append color section_color' data-color='<%= @matter.background %>' data-color-format='rgba' style='position: absolute;right:30px;bottom:-5px;' title='Set Background Color'>
+    <div class='add-on'>
+      <i style='background-color: <%= @matter.background %>;'></i>
+    </div>
+  </a>
+  <% unless GlobalConstants::WIDGETS_WITHOUT_TEXT.include?(@matter.pwidget.name.downcase) %>
+      <a id="<%= @matter.id %>" href='#' class='input-append color text_color' data-color='<%= @matter.font_color %>' data-color-format='rgb' style='position: absolute;right: 60px;bottom:-5px;' title='Set Text Color'>
+        <div class='add-on'>
+          <i style='background-color: <%= @matter.font_color %>;'></i>
+        </div>
+      </a>
+      <%= hidden_field_tag :psection_id, @matter.id, :style => "display:none" %>
+      <!--Fields for font color and opacity-->
+      <%= hidden_field_tag :font_color, "rgb(0,0,0)", :id => "font_color_#{@matter.id}" %>
+      <%= hidden_field_tag :font_opacity, "1", :id => "font_opacity_field_#{@matter.id}" %>
+
+      <!--fields for background color of a the section and opacity-->
+      <%= hidden_field_tag :background_color, "rgb(0,0,0)", :id => "background_color_#{@matter.id}" %>
+      <%= hidden_field_tag :background_opacity, "1", :id => "background_opacity_field_#{@matter.id}" %>
+
+      <%= select_tag :font_size, options_for_select(30..100, @matter.font_size), :class => 'input-small font_size',:id=>"font_size_#{@matter.id}" %>
+
+      <%= select_tag :font_family, options_for_select(['Arial', 'Times New Roman'], @matter.font_family), :class => 'input-small font_family',:id=>"font_family_#{@matter.id}" %>
+
+      <%= select_tag :font_weight, options_for_select(['Bold', 'Italic', 'Normal'], @matter.font_weight), :class => 'input-small font_weight',:id=>"font_weight_#{@matter.id}" %>
+
+
+  <% end %>
+
+
+
+</div>

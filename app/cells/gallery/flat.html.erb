@@ -1,0 +1,3 @@
+<% @pdata.photos.each do |photo| %>
+    <img src="<%= photo.image %>" style="max-height:<%= 0.75*Math.sqrt((@width*@height/@pdata.photos.count).to_f/(photo.image.width.to_f/photo.image.height.to_f)) %>px "/>
+<% end %>

@@ -1,0 +1,20 @@
+<div class="modal" id="myModal">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+
+    <h3>New pTemplate</h3>
+  </div>
+  <div class="modal-body">
+    <%= form_tag :action => 'save_ptemplate' %>
+
+    <%= label_tag :name %>
+    <%= text_field_tag :name %>
+    <%= label_tag :description %>
+    <%= text_field_tag :description %>
+
+  </div>
+  <div class="modal-footer">
+    <%= submit_tag %>
+    <a href="#" class="btn">Close</a>
+  </div>
+</div>

@@ -1,0 +1,37 @@
+<%= form_for(@pbehavior) do |f| %>
+  <% if @pbehavior.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@pbehavior.errors.count, "error") %> prohibited this pbehavior from being saved:</h2>
+
+      <ul>
+      <% @pbehavior.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.hidden_field :pcontent_id,:value=> locals[:pcontent_id] %>
+    <%= hidden_field_tag :animate, locals[:animate] %>
+  </div>
+  <div class="field">
+    <%= f.label :prev_pcontent_id %><br />
+    <%= f.select :prev_pcontent_id,options_from_collection_for_select(Pcontent.find(locals[:pcontent_id]).pslide.pcontents-Array(Pcontent.find(locals[:pcontent_id])),"id","id"),:include_blank=>true %>
+  </div>
+  <div class="field">
+    <%= f.label :pevent_id %><br />
+    <%= f.select :pevent_id,options_from_collection_for_select(Pevent.all,"id","name") %>
+  </div>
+  <div class="field">
+    <%= f.label :pfragment_id %><br />
+    <%= f.select :pfragment_id,options_from_collection_for_select(Pfragment.all,"id","name") %>
+  </div>
+  <div class="field">
+    <%= f.label :delay %><br />
+    <%= f.number_field :delay %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

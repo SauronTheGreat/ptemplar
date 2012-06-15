@@ -1,0 +1,10 @@
+<a href="#modal_form_<%= @pdata.passets.first.id %>" data-toggle="modal" data-backdrop="static" class="btn btn-inverse">
+<%= image_tag @pdata.passets.first.media_passet, :style=>"max-width:#{@width}px;max-height:#{@height}px" %>
+</a>
+
+<div id="modal_form_<%= @pdata.passets.first.id %>" class="modal hide fade" style="z-index: 99999">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal"> &times; </a>
+     <%= raw(@pdata.data) %>
+  </div>
+</div>

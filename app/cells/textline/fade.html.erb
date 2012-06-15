@@ -1,0 +1,14 @@
+<script type="text/javascript">
+    $(function () {
+        $('#behaving_<%= @pdata.id %>').delay('<%= @pdata.pvar %>').fadeIn(5000);
+        $('#behaving_<%= @pdata.id %>').parent().css("width", "<%= @width*0.95 %>px")
+        <% if @numlines<4 %>
+        $('#behaving_<%= @pdata.id %>').parent().prev().css("height", "<%= @height*1.5 %>px")
+        <% end %>
+
+    });
+</script>
+
+<div id="behaving_<%= @pdata.id %>" style="display: none;text-align: center;margin-top:<%= @paddingtop %>px;font-size: <%= @fontsize %>px;line-height:<%= @fontsize*1.05 %>px; ">
+  <%= raw(@pdata.data) %>
+</div>

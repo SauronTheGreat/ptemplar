@@ -1,0 +1,77 @@
+<%= stylesheet_link_tag 'application' %>
+<%= javascript_include_tag 'application' %>
+
+
+<% if @pslide.pbackground %>
+    <% @smatter_background=@pslide.pbackground.split('|')[0] %>
+    <% @smatter_alpha=@pslide.pbackground.split('|')[1] %>
+<% end %>
+
+<div id="pslide_display_back" style=" position: absolute;
+        top: 20px;
+        left: 150px;
+        border-radius: 10px;
+        margin-top: 30px;
+        width: 960px;
+        height: 600px;
+        background: white;
+        overflow: hidden;
+        border:1px solid black;
+        background-color: <%= @smatter_background %>;
+        opacity: <%= @smatter_alpha %>">
+
+  <% unless @pslide.pfile_file_name.nil? %>
+      <%= image_tag @pslide.pfile, :style => "position:absolute;width:960px;height:600px;" %>
+  <% end %>
+
+</div>
+<div id="pslide_display" style="
+position: absolute;
+        top: 20px;
+        left: 150px;
+        border-radius: 10px;
+        margin-top: 30px;
+        width: 960px;
+        height: 600px;
+        border: 1px solid #000000;
+        background: transparent;
+        overflow: hidden;">
+  <div>
+
+    <% @pslide.ptemplate.sections.each_with_index do |section, index| %>
+
+
+        <% @matter=@pslide.pcontents.where('section_id=?', section).first %>
+
+        <% if @matter %>
+
+            <% if @matter.pbackground %>
+                <% @matter_background=@matter.pbackground.split('|')[0] %>
+                <% @matter_alpha=@matter.pbackground.split('|')[1] %>
+                <% @matter_color=@matter.pbackground.split('|')[2] %>
+            <% end %>
+            <div id="<%= @matter.id %>" class="colored_div" style="border-radius:<%= [section.width/30,10].min %>px;background-color:<%= @matter_background %>;opacity:<%= @matter_alpha %>;position: absolute;left:<%= section.xpos %>px;top:<%= section.ypos %>px;height:<%= section.height %>px;width:<%= section.width %>px">
+            </div>
+            <div style="color:<%= @matter_color %>;padding:9px;position: absolute;left:<%= section.xpos %>px;top:<%= section.ypos %>px;height:<%= section.height %>px;width:<%= section.width %>px">
+
+              <div class="design_buttons">
+
+
+              </div>
+              <% @psection=section %>
+              <% @widget=@matter.section.widget %>
+              <% unless @behavior=@matter.behavior %>
+                  <% @behavior=@widget.behaviors.first %>
+              <% end %>
+              <% @renderer = "<"+"%= render_cell :#{@widget.name.downcase},
+                                                :#{@behavior.name.downcase},
+                                                :pcontents => @matter,
+                                                :width => @psection.width,
+                                                :height => @psection.height %"+">" %>
+              <%= render :inline => @renderer %>
+        <% end %>
+        </div>
+    <% end %>
+
+  </div>
+</div>

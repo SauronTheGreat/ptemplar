@@ -1,0 +1,40 @@
+
+<%= stylesheet_link_tag "pslidecss/nivo-slider" %>
+<%= stylesheet_link_tag "pslidecss/nivo-themes/pascal/pascal" %>
+<%= javascript_include_tag "pslidejs/jquery.nivo.slider" %>
+<script type="text/javascript">
+    $(function () {
+        $('#slider').nivoSlider({
+            effect:"random",
+            slices:15,
+            boxCols:8,
+            boxRows:4,
+            animSpeed:500,
+            pauseTime:3000,
+            startSlide:0,
+            directionNav:true,
+            directionNavHide:true,
+            controlNav:true,
+            controlNavThumbs:true,
+            controlNavThumbsFromRel:true,
+            keyboardNav:true,
+            pauseOnHover:true,
+            manualAdvance:true
+        });
+    });
+</script>
+<style>
+    #slider {
+        max-height: <%= @height %>px;
+        max-width: <%= @width %>px;
+        background-size: contain;
+    }
+</style>
+<div class="slider-wrapper theme-pascal">
+  <div class="ribbon"></div>
+  <div class="nivoSlider" id='slider'>
+    <% @pdata.photos.each do |photo| %>
+        <img src="<%= photo.image %>"/>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ptemplar</title>
+  <%= stylesheet_link_tag "application" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+  <%= yield(:head) %>
+</head>
+<body>
+<div id="wrapper">
+  <div class="navbar navbar-fixed-top" style="">
+    <div class="navbar-inner" style="height:40px">
+      <div class="container-fluid">
+        <a class="brand" href="/homepage">Ptemplar: <%= @presentation.name %></a>
+        <ul class="nav">
+          <li><a href="<%= package_as_html_path(@presentation) %>">Export to HTML</a></li>
+          <li><a href="#edit_prez_form" data-toggle="modal">Edit Details</a></li>
+
+        </ul>
+
+        <% if !user_signed_in? %>
+            <%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => {:class => "pull-right navbar-form"}) do |f| %>
+                <%= f.email_field :email, :class => "input-small", :placeholder => "Email" %>
+                <%= f.password_field :password, :class => "input-small", :placeholder => "Password" %>
+                <%= f.submit "Sign In", :class => "btn-info btn" %>
+            <% end %>
+        <% else %>
+            <div class="pull-right" style="margin-top: 10px;color:white;">
+              <%= current_user.email %>
+              <span class="nav_link">
+              | <%= link_to "Sign out", destroy_user_session_path, :method => :delete, :style => "color:white;" %>
+            </span>
+            </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <!--<div class="content" style="background: transparent; left: -20px;padding-left: 0px;">-->
+      <%= yield %>
+    <!--</div>-->
+
+  </div>
+</div>
+
+
+</body>
+</html>
+
+
+

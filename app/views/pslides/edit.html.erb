@@ -1,0 +1,106 @@
+<% index=1 %>
+    <h2>Add <%= @section.widget.name %></h2>
+  <%= form_for @pcontent, :html => {:multipart => true} do |f| %>
+      <div class="modal-body">
+        <div class="clearfix">
+          <%= f.hidden_field :section_id, :value => @section.id %>
+          <%= f.hidden_field :pslide_id, :value => @pslide.id %>
+          <div class="input">
+            <% case @section.widget.name %>
+            <% when "Image" %>
+                <% @pcontent.photos.build %>
+                <div class="newPaperclipFiles">
+                  <%= f.fields_for :photos do |photo| %>
+                      <% if photo.object.new_record? %>
+                          <%= photo.file_field :image %>
+                      <% end %>
+                  <% end %>
+                </div>
+
+                <div class="existingPaperclipFiles">
+                  <% f.fields_for :photos do |photo| %>
+                      <% unless photo.object.new_record? %>
+                          <div class="thumbnail">
+                            <%= link_to(image_tag(photo.object.image.url(:thumb)), photo.object.image.url(:original)) %>
+                            <%#= photo.check_box :_delete %>
+                          </div>
+                      <% end %>
+                  <% end %>
+                </div>
+                <%= f.hidden_field :pdata, :value => "Image", :style => 'display:none;' %>
+            <% when "Slidecard" %>
+                <% @pcontent.photos.build %>
+                <div class="newPaperclipFiles">
+                  <%= f.fields_for :photos do |photo| %>
+                      <% if photo.object.new_record? %>
+                          Add Image:    <%= photo.file_field :image %>
+                      <% end %>
+                  <% end %>
+                </div>
+
+                <div class="existingPaperclipFiles">
+                  <% f.fields_for :photos do |photo| %>
+                      <% unless photo.object.new_record? %>
+                          <div class="thumbnail">
+                            Change Image:   <%= link_to(image_tag(photo.object.image.url(:thumb)), photo.object.image.url(:original)) %>
+                            <%#= photo.check_box :_delete %>
+                          </div>
+                      <% end %>
+                  <% end %>
+                </div>
+                Add Text: <%= f.text_field :pdata, :class=> 'span5' %>
+            <% when "Html" %>
+                <% @htmlid= "htmlarea_"+ index.to_s %>
+                <script type="text/javascript">
+                    $(function () {
+                        $('#<%= @htmlid %>').tinymce({
+                            theme:'advanced'
+                        });
+                    });
+                </script>
+                <%= f.text_area :pdata, :style => 'width:97%;height:300px;', :id => @htmlid %>
+            <% when "Video" %>
+                Put in a Youtube embed link
+                <%= f.text_field :pdata, :class => 'span5' %>
+            <% when "Title" %>
+                <%= f.text_field :pdata, :class => 'span5' %>
+            <% when "Gallery" %>
+                <% 10.times { @pcontent[index].photos.build } %>
+                <div class="newPaperclipFiles">
+
+                  <%= f.fields_for :photos do |photo| %>
+
+                      <% if photo.object.new_record? %>
+                          <%= photo.file_field :image %>
+                      <% end %>
+
+                  <% end %>
+
+                </div>
+
+                <div class="existingPaperclipFiles">
+
+                  <% f.fields_for :photos do |photo| %>
+
+                      <% unless photo.object.new_record? %>
+
+                          <div class="thumbnail">
+                            <%= link_to(image_tag(photo.object.image.url(:thumb)), photo.object.image.url(:original)) %>
+                            <%= photo.check_box :_delete %>
+                          </div>
+
+                      <% end %>
+
+                  <% end %>
+                </div>
+
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div>
+          <%= f.submit "Submit", :class => "btn btn-warning btn-large" %>
+        </div>
+      </div>
+  <% end %>

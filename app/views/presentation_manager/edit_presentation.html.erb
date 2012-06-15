@@ -1,0 +1,130 @@
+<script type="text/javascript">
+
+    $(function () {
+
+        $(".pslide_thumbnails").click(function () {
+            $.get("/get_pslide_html_data/" + $(this).attr("id"), function (data) {
+                $(".span8").html(data);
+            });
+        });
+        $(".thumbnails_list").sortable();
+
+//        $(".thumbnails_list").sortable({
+//            change:function (event) {
+//                alert("hello");
+//                var order = $(this).sortable("serialize");
+//                 alert(order);
+//                $.ajax({
+//                    type:'POST',
+//                    url:'<%#= update_list_path(@presentation.id) %>',
+//                    data:order,
+//                    success:function () {
+//                    }
+//                    // dataType: JSON()
+//                });
+//            }
+//
+//        });
+      //  $(".thumbnails_list").disableSelection();
+
+    });
+
+</script>
+
+<link href="/assets/pslidecss/pslide.css" media="screen" rel="stylesheet" type="text/css"/>
+
+<style type="text/css">
+    html, body {
+        background: white;
+    }
+</style>
+
+<div class="row">
+  <div id="side_panel" style="background: #000000; width:250px">
+    <%#TODO:The user should be able to downlooad as SCO too.  %>
+    <a class="btn btn-success span2" href="<%= package_as_html_path(@presentation.id) %>">Export As HTML</a>
+    <a class="btn btn-warning span2" data-toggle="modal" href="#new_slide_form">Add New Slide</a>
+
+    <div id="new_slide_form" class="modal hide fade" style="width:82%;margin-left:-40%;">
+
+          <div class="modal-header">
+            <a class="close" data-dismiss="modal"> &times; </a>
+
+            <h2 style="padding: 5px; text-align: left;">Pick a Ptemplate</h2>
+          </div>
+          <div class="modal-body" style="overflow: auto;height:310px; ">
+           <%= render "pslides/form",:locals=>{:prez_id=>@presentation.id} %>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-warning btn-large" data-dismiss="modal"> Cancel </a>
+
+            <div class="actions pull-right">
+
+            </div>
+          </div>
+    </div>
+
+    <a class="btn btn-info span2" data-toggle="modal" href="#add_from_bank">Add from Bank</a>
+
+    <div class="modal hide fade" id="add_from_bank">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+
+        <h3>Pick a Slide</h3>
+      </div>
+      <%= form_for @presentation_pslide do |f| %>
+          <div class="modal-body">
+            <%= f.hidden_field :presentation_id, :value => @presentation.id %>
+            <%= f.select :pslide_id, options_from_collection_for_select(@pslide_bank, "id", "id", 1) %>
+
+          </div>
+          <div class="modal-footer">
+            <%= f.submit "Next", :class => "btn btn-info btn-large" %>
+          </div>
+
+      <% end %>
+
+    </div>
+
+    <br>
+    <br>
+
+
+    <ul class="thumbnails_list" style="margin-left: 20px;;margin-top: 60px;;background: white;height:600px;width:210px;overflow: auto;">
+      <% @pslides.each_with_index do |pslide, index| %>
+
+          <li style="list-style-type: none;" id="<%= "list_#{pslide.id}" %>">
+            <%= link_to image_tag("/pslide_Images/slide_#{pslide.id}.jpg", :style => "border:1px solid black;border-radius:5px;"), "#", :class => "pslide_thumbnails span2", :id => "#{pslide.id}" %></li>
+          <br>
+      <% end %>
+    </ul>
+
+  </div>
+  <div class="span8" style="margin-top: -20px;left: 90px;position:relative;background: white;">
+
+
+    <%= raw @pslide_html_data %>
+
+  </div>
+</div>
+
+<div id="edit_prez_form" class="modal hide fade">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal"> &times; </a>
+
+    <h2 style="padding: 5px; text-align: left;">New Presentation</h2>
+  </div>
+  <div class="modal-body">
+    <%= render 'presentations/form' %>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+
+

@@ -1,0 +1,9 @@
+<script type="text/javascript">
+    $(function () {
+        $('#behaving_<%= @pdata.id %>').slideDown(3000);
+    });
+</script>
+
+<div id="behaving_<%= @pdata.id %>" style="display: none;padding:10px;margin-right: 25px;height:<%= @height*0.9 %>px;overflow: auto;">
+  <%= raw(@pdata.data) %>
+</div>

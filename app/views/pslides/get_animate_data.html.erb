@@ -1,0 +1,64 @@
+<%= content_for :head do %>
+    <%= stylesheet_link_tag "pslidecss/pslide" %>
+    <%= javascript_include_tag "pslidejs/pslide" %>
+
+<% end %>
+
+
+<div id="side_panel">
+
+
+</div>
+<!--add slide to bank modal-->
+
+<script type="text/javascript">
+
+    $(function () {
+        var start_point_x = -1;
+        var start_point_y = -1;
+        var end_point_x = -1;
+        var end_point_y = -1;
+
+        $("#pslide_display_back").click(function (event) {
+
+            if (start_point_x == -1 && start_point_y == -1) {
+                start_point_x = event.pageX - 150;
+                start_point_y = event.pageX - 50;
+                $("#start_xpos").attr("value", start_point_x);
+                $("#start_ypos").attr("value", start_point_y);
+                alert("Start Position Stored");
+
+            }
+            else if (end_point_x == -1 && end_point_y == -1) {
+                end_point_x = event.pageX - 150;
+                end_point_y = event.pageX - 50;
+                $("#end_xpos").attr("value", end_point_x);
+                $("#end_ypos").attr("value", end_point_y);
+                alert("End Position Stored");
+            }
+
+
+        });
+
+    });
+
+</script>
+
+
+
+
+<div id="pslide">
+  <div id="pslide_display_back" style="background-color: <%= @smatter_background %>;opacity: <%= @smatter_alpha %>">
+    Click on start Point
+    <%= form_tag :controller => "pslides", :action => "capture_animate_data" %>
+    <%= hidden_field_tag :start_xpos, 0, :id => "start_xpos" %>
+    <%= hidden_field_tag :start_ypos, 0, :id => "start_ypos" %>
+    <%= hidden_field_tag :end_xpos, 0, :id => "end_xpos" %>
+    <%= hidden_field_tag :end_ypos, 0, :id => "end_ypos" %>
+    <%= hidden_field_tag :pbehavior_id, @pbehavior.id %>
+
+    <%= submit_tag "DOne", :class => "btn btn-info" %>
+  </div>
+
+
+</div>

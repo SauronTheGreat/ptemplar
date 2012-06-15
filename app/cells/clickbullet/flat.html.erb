@@ -1,0 +1,52 @@
+
+
+<script type="text/javascript">
+    $(function () {
+        $('.clickbullet_block img').click(function () {
+            $(this).prev().animate({marginLeft:'<%= 0.35*@width %>px', opacity:'1'}, {queue:false, duration:400});
+        });
+    });
+</script>
+
+<style>
+
+    .clickbullet_block {
+        display: block;
+        overflow: hidden;
+        margin-bottom: 15px;
+        width: <%= 0.9*@width %>px;
+        height: <%= @height-15 %>px;
+
+        padding-top: 10px;
+        font-size: <%= 0.6*@fontsize %>px;
+        line-height: <%= @fontsize*0.65 %>px;
+
+    }
+
+    .clickbullet_block .clickbullet_text {
+        opacity: 0;
+
+    }
+
+    .clickbullet_block img {
+        cursor: pointer;
+        border: 0;
+        max-width: <%= @width*0.33 %>px;
+        max-height: <%= @height*0.90/@pdata.passets.count %>px;
+        border-radius: 10px;
+    }
+
+</style>
+
+<div class="clickbullet_block">
+
+  <% @pdata.passets.each do |asset| %>
+      <div class="clickbullet_text" >
+        <% if asset.caption %>
+            <%= raw(@pdata.data.caption) %>
+        <% end %>
+      </div>
+      <img src="<%= asset.media_passet %>" style="margin-top: -40px;position:absolute;"/>
+
+  <% end %>
+</div>

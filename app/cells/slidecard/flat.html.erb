@@ -1,0 +1,48 @@
+<script type="text/javascript">
+    $(function () {
+        $('.hover_block').hover(function () {
+            $(this).find('img').animate({top:'<%= @height %>px', opacity:'0'}, {queue:false, duration:200});
+        }, function () {
+            $(this).find('img').animate({top:'7px', opacity:'1'}, {queue:false, duration:200});
+        });
+    });
+</script>
+
+<style>
+        /* For Flash Cards*/
+
+    #hover_block_<%= @pdata.id %> {
+        display: block;
+        overflow: hidden;
+        margin-bottom: 15px;
+        width: <%= 0.9*@width %>px;
+        height: <%= @height-@paddingtop-15 %>px;
+
+        text-align: center;
+        padding-top: <%= 0.6*@paddingtop %>px;
+        font-size: <%= @fontsize %>px;
+        line-height: <%= (@fontsize-30)*1.05 %>px;
+
+    }
+
+    #hover_block_<%= @pdata.id %> img {
+        position: absolute;
+        top: 7px;
+        left: 6px;
+        border: 0;
+        width: <%= @width-10 %>px;
+        height: <%= @height-10 %>px;
+        border-radius: 10px;
+
+    }
+
+
+</style>
+
+
+
+
+<div id="hover_block_<%= @pdata.id %>" class="hover_block">
+  <img src="<%= @pdata.passets.first.media_passet %>"/>
+  <%= raw(@pdata.data) %>
+</div>

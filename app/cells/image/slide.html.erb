@@ -1,0 +1,7 @@
+<script type="text/javascript">
+    $(function () {
+        $('.behaving_<%= @pdata.id %>').slideDown(3000);
+    });
+</script>
+
+<img class="behaving_<%= @pdata.id %>" src="<%= @pdata.photos.first.image %>" style="border-radius: 10px;display: none;max-height:<%= 0.98*@height %>px;max-width:<%= 0.98*@width %>px;"/>

@@ -1,0 +1,261 @@
+<%= content_for :head do %>
+    <%= stylesheet_link_tag "pslidecss/pslide" %>
+    <%= javascript_include_tag "pslidejs/pslide" %>
+    <script type="text/javascript">
+        $(function () {
+
+            $(".design_buttons").hide();
+
+
+            //  $('.non-design_buttons').hide();
+
+            $('.section_color').colorpicker().on('changeColor', function (ev) {
+                //alert($(this).attr("id"));
+                var target_div_id = $(this).attr("id").split("_")[1];
+                $("#" + target_div_id).css("background-color", ev.color.toHex());
+                var alpha = ev.color.value.a;
+                $("#" + target_div_id).css("opacity", ev.color.value.a);
+
+            });
+            $('.text_color').colorpicker().on('changeColor', function (ev) {
+                var divStyle = $(this).parent().parent()[0].style;
+                //var target_div_id=$(this).parent().parent()[0].attr("id").split(" ")[1];
+                //$("#"+target_div_id).next().children(2).css("color",ev.color.toHex());
+                divStyle.color = ev.color.toHex();
+            });
+
+            $('.slide_color').colorpicker().on('changeColor', function (ev) {
+                $('#pslide_display_back').css("background-color", ev.color.toHex());
+                var alpha = ev.color.value.a;
+                $('#pslide_display_back').css("opacity", alpha);
+
+            });
+
+            $('#save_button').on("click", function () {
+
+
+                //code to save colors
+                var data = {fields:[], pslide:[], slcol:[], textcol:[]};
+                var count = $('.colored_div').length;
+                data["pslide"].push(<%= @pslide.id %>);
+                $('.colored_div').each(function () {
+
+                    data["fields"].push({
+                        pcontent_id:$(this).attr("id"),
+                        background_color:$(this).css("background-color"),
+                        background_opacity:$(this).css("opacity"),
+                        font_color:$(this).next().css("color"),
+                        font_size:$(this).next().children(':first-child').next().css("font-size"),
+                        font_family:$(this).next().children(':first-child').next().css("font-family"),
+                        font_weight:$(this).next().children(':first-child').next().css("font-weight"),
+                        font_opacity:$(this).next().children(':first-child').next().css("opacity")
+
+                    });
+                });
+                data["slcol"].push({
+                    background:$('#pslide_display_back').css("background-color"),
+                    opacity:$('#pslide_display_back').css("opacity")
+                });
+
+                $.ajax({
+                    url:"<%= save_colors_path %>",
+                    type:"post",
+                    data:JSON.stringify(data),
+                    contentType:"application/json",
+                    success:function (data) {
+                    }
+                });
+                //code to  save html data
+                togglemode();
+                var data = {fields:[], pslide_id:[]};
+                var html_content = "";
+                $("#pslide_display").find("div").each(function () {
+                    //   alert("hello");
+                    if ($(this).is(":visible"))
+
+                        html_content = html_content + $(this).html();
+                });
+                data["fields"].push({
+                    html_data:html_content,
+                    pslide_id:<%= @pslide.id %>
+
+                });
+                //make the ajax call to save the content
+
+                $.ajax({
+                    url:"<%= save_html_data_path(@pslide) %>",
+                    type:"post",
+                    data:JSON.stringify(data),
+                    contentType:"application/json",
+                    success:function (data) {
+                    }
+                });
+                //code to add a slide to slide bank
+
+
+            });
+
+
+            //  $('#edit_on').val("true");
+
+            pslide_id:<%= @pslide.id %>
+
+
+                    $("#add_to_slide_bank").click(function () {
+                        var data = {pslide_fields:[]};
+                        data["pslide_fields"].push({
+                            pslide_id:<%= @pslide.id %>
+                        });
+                        //make the ajax call to save the content
+
+                        $.ajax({
+                            url:"<%= add_to_bank_path(:pslide_id=>@pslide) %>",
+                            type:"post",
+                            data:JSON.stringify(data),
+                            contentType:"application/json",
+                            success:function (data) {
+
+                                $("#add_to_slide_bank").removeClass();
+                                $("#add_to_slide_bank").addClass("btn btn-inverse design_buttons");
+
+                                $("#add_to_slide_bank").prop("href", "#add_slide_to_bank");
+                                $("#add_to_slide_bank").html("Add In Bank" + "<br><br>");
+                                $("#add_to_slide_bank").removeAttr("id");
+                                //alert( $("#add_to_slide_bank").attr("href"))  ;
+
+
+                            }
+                        });
+
+                    });
+        })
+        ;
+
+    </script>
+<% end %>
+
+<div class="javascript_code">
+  <script type="text/javascript">
+      $(function () {
+          <%= @pslide.js %>
+      });
+
+  </script>
+</div>
+
+<div id="side_panel">
+
+
+  <a id="preview_button" href="#" onclick="togglemode($(this));" class="btn btn-success mode_button" style="padding-top: 30px;padding-bottom: 30px;">
+    Pre-View Mode
+  </a>
+  <a id="proview_button" href="#" onclick="togglemode($(this));" class="btn btn-danger mode_button" style="padding-top: 30px;padding-bottom: 30px;">
+    Pro-View Mode
+  </a>
+  <a id="design_button" href="#" onclick="togglemode($(this));" class="btn btn-danger mode_button" style="padding-top: 30px;padding-bottom: 30px;">
+    Design Mode
+  </a>
+
+  <br/>
+  <br/>
+
+  <% @smatter_background=@pslide.background %>
+
+  <div class="design_buttons btn btn-warning" style="width:90px;padding-top: 20px;margin:auto;">
+    <span style="font-size: 24px;">Slide Back</span>
+    <br/>
+    <br/>
+    <a href="#" class="input-append color slide_color btn btn-disabled" data-color="<%= @smatter_background %>" data-color-format="rgba" style="font-weight: bolder;font-size: 12px;width:60px;color:white;text-align: center">
+      <div class="add-on" style="margin-left:-6px;">
+        <i style="background-color: <%= @smatter_background %>;width:60px;"></i>
+      </div>
+    </a>
+    <br/>
+    <br/>
+    <a href="#add_back_image" data-toggle="modal" data-backdrop="static" class="btn btn-inverse" style="font-weight: bolder;font-size: 12px;width:60px;">
+      Image
+    </a>
+    <br/>
+    <br/>
+
+    <div id="add_back_image" class="modal hide fade">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"> &times; </a>
+
+        <h2>Upload the Background Image</h2>
+      </div>
+      <%= form_for @pslide do |f| %>
+          <div class="modal-body">
+            <div class="clearfix">
+              <div class="input">
+                <%= f.file_field :pfile %>
+                <br/>
+
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div>
+              <%= f.submit "Submit", :class => "btn btn-warning btn-large" %>
+            </div>
+          </div>
+      <% end %>
+
+    </div>
+  </div>
+
+  <br/>
+  <br/>
+  <a id="save_button" href="#" onclick="" class="btn btn-primary design_buttons" style="padding-top: 30px;font-size: 24px;color:white;width:90px;line-height: 28px;margin: auto;margin-top: -10px">
+    Save
+    <br/>
+    <br/>
+
+  </a>
+  <br>
+  <br>
+  <% if @pslide.in_bank? %>
+      <% @class="btn btn-danger design_buttons" %>
+      <% @text="Remove From Bank" %>
+      <% @reference="id=add_to_slide_bank   href=#" %>
+
+  <% else %>
+      <% @class="btn btn-inverse design_buttons" %>
+      <% @text="Save In Bank" %>
+      <% @reference='href=#add_slide_to_bank ' %>
+  <% end %>
+  <a  <%= @reference %> data-toggle="modal" class="<%= @class %>" style="padding-top: 30px;font-size: 24px;color:white;width:90px;line-height: 28px;margin: auto;margin-top: -10px">
+    <%= @text %>
+    <br/>
+    <br/>
+
+  </a>
+
+  <br/>
+  <br/>
+
+
+</div>
+<!--add slide to bank modal-->
+
+<div class="modal fade" id="add_slide_to_bank">
+  <div class="modal-header">
+    <button class="close" data-dismiss="modal">×</button>
+    <h3>Give this Pslide a name</h3>
+  </div>
+  <div class="modal-body">
+    <%= form_tag add_to_bank_path do %>
+        <%= hidden_field_tag :pslide_id, @pslide.id %>
+        <%= text_field_tag :name, @pslide.name %>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn close" data-dismiss="modal">Close</a>
+          <%= submit_tag "Save In bank", :class => "btn btn-success" %>
+
+    <% end %>
+    </div>
+    </div>
+
+<div id="pslide">
+  <%= render :partial => 'pslide_form' %>
+</div>

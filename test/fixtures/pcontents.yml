@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  pslide_id: 1
+  psection_id: 1
+  markup: MyText
+
+two:
+  pslide_id: 1
+  psection_id: 1
+  markup: MyText

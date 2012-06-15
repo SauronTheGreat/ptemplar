@@ -1,0 +1,15 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @pwidget.name %>
+</p>
+
+<p>
+  <b>Builder:</b>
+  <%= @pwidget.builder %>
+</p>
+
+
+<%= link_to 'Edit', edit_pwidget_path(@pwidget) %> |
+<%= link_to 'Back', pwidgets_path %>

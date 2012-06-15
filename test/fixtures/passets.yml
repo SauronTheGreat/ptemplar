@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  pcontent_id: 1
+  media_passet_file_name: MyString
+  caption: MyString
+  markup: MyText
+
+two:
+  pcontent_id: 1
+  media_passet_file_name: MyString
+  caption: MyString
+  markup: MyText

@@ -1,0 +1,56 @@
+<script type="text/javascript">
+    $(function () {
+        $('#clickbullet_block_<%= @pdata.id %>').click(function () {
+            $('.clickbullet_text_<%= @pdata.id %>').animate({marginLeft:'<%= 0.35*@width %>px', opacity:'1'}, {queue:false, duration:400});
+        });
+    });
+
+</script>
+
+<style>
+
+    #clickbullet_block_<%= @pdata.id %> {
+        display: block;
+        overflow: hidden;
+        margin-bottom: 15px;
+        width: <%= 0.9*@width %>px;
+        height: <%= @height-15 %>px;
+
+        padding-top: 10px;
+        
+
+    }
+
+    #clickbullet_block_<%= @pdata.id %> .clickbullet_text_<%= @pdata.id %> {
+font-size: <%= [@fontsize,36].min %>px;
+        line-height: <%= [@fontsize*1.05,40].min %>px;
+        opacity: 0;
+	position:absolute;
+
+    }
+
+    #clickbullet_block_<%= @pdata.id %> img {
+        cursor: pointer;
+        border: 0;
+        max-width: <%= @width*0.33 %>px;
+        max-height: <%= @height*0.80/@pdata.passets.count %>px;
+        border-radius: 10px;
+    }
+
+</style>
+
+<div id="clickbullet_block_<%= @pdata.id %>">
+
+  <% @pdata.passets.each do |asset| %>
+      <div class="clickbullet_text_<%= @pdata.id %>" >
+        <% if asset.caption%>
+            <%= raw(@pdata.data) %>
+        <% end %>
+      </div>
+      <img src="<%= asset.image %>" style="position:relative
+;"/>
+	<br/>
+	<br/>
+
+  <% end %>
+</div>

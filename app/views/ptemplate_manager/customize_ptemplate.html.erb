@@ -1,0 +1,325 @@
+<%= content_for :head do %>
+    <%= stylesheet_link_tag "pslidecss/pslide" %>
+    <%= javascript_include_tag "pslidejs/pslide" %>
+<% end %>
+
+<style type="text/css">
+
+    .selected {
+        margin-left: 40px;
+    }
+
+    .unselected {
+        margin-left: 20px;
+    }
+
+    .side_panel {
+
+        background: rgb(252, 255, 244); /* Old browsers */
+        background: -moz-linear-gradient(-45deg, rgb(252, 255, 244) 0%, rgb(223, 229, 215) 40%, rgb(179, 190, 173) 100%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgb(252, 255, 244)), color-stop(40%, rgb(223, 229, 215)), color-stop(100%, rgb(179, 190, 173))); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(-45deg, rgb(252, 255, 244) 0%, rgb(223, 229, 215) 40%, rgb(179, 190, 173) 100%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(-45deg, rgb(252, 255, 244) 0%, rgb(223, 229, 215) 40%, rgb(179, 190, 173) 100%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(-45deg, rgb(252, 255, 244) 0%, rgb(223, 229, 215) 40%, rgb(179, 190, 173) 100%); /* IE10+ */
+        background: linear-gradient(-45deg, rgb(252, 255, 244) 0%, rgb(223, 229, 215) 40%, rgb(179, 190, 173) 100%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#fcfff4', endColorstr = '#b3bead', GradientType = 1); /* IE6-9 fallback on horizontal gradient */
+
+        padding-top: 40px;
+        text-align: center;
+        height: 650px;
+        width: 160px;
+        overflow: auto;
+        border: 1px solid black;
+    }
+
+    #pTemplate {
+        position: absolute;
+        top: 20px;
+        left: 170px;
+        border-radius: 10px;
+        margin-top: 30px;
+        width: 960px;
+        height: 600px;
+        border: 1px solid #000000;
+        background: #a9a9a9;
+    }
+
+    #background-colors {
+        position: absolute;
+        top: 700px;
+        left: 150px;
+        border-radius: 10px;
+        margin-top: 30px;
+        width: 960px;
+        height: 100px;
+        border: 1px solid #000000;
+        background: #000000;
+
+    }
+
+        .conf-buttons{
+            background-color: yellow;
+        }
+
+
+</style>
+<script type="text/javascript">
+    $(function () {
+
+        var widget_name = "";
+        var widget_id = "";
+        var widget_selected = false;
+        $(".existing_psections").draggable();
+        $(".existing_psections").resizable();
+
+        $(".unselected").click(function () {
+            widget_selected = true;
+            $(".selected").removeClass("selected");
+            $(this).addClass("selected");
+            $(this).removeClass("unselected");
+            widget_name = $(this).attr("title");
+            widget_id = $(this).attr("id");
+        });
+        $('#pTemplate').click(function (e) {
+            if (widget_selected) {
+                var selection_no = 0;
+                var LEFT = e.pageX;
+                var TOP = e.pageY;
+                var this_selection = "#selection" + selection_no;
+                $('#pTemplate').after('<div id="selection' + selection_no + '" class="selectiondiv ui-widget-content" style="border-radius:5px;overflow:hidden;text-align:center">  </div>');
+                $(this_selection).append(" <div class='ui-widget-header' id=" + widget_id + " > " + widget_name + "<a href='#' onclick='$(this).parent().parent().remove();' class='pull-right' style='font-size: 12px;color:black;margin-right: 3px;'>x</a>" + "</div> ");
+                //$(this_selection).append(" <div>  "+"".replace(new RegExp( "\\n", "g" )," ") + "</div> ");
+                $("#selection" + selection_no).css({
+                    position:'absolute',
+                    zIndex:5000,
+                    left:LEFT,
+                    top:TOP,
+                    width:100,
+                    height:40
+                });
+                $(this_selection).show();
+                $(this_selection).draggable();
+                $(this_selection).resizable();
+            }
+        });
+
+        var pToffset = $('#pTemplate').offset();
+
+        $('#save_button,#save_as_button').click(function () {
+            var data = {fields:[], ptemplate:[], bkg_color:[], opacity:[]};
+            var count = $('.selectiondiv').length;
+            data["ptemplate"].push(<%= @ptemplate.id %>);
+            data["bkg_color"].push($("#pTemplate").css("background-color"));
+            data["opacity"].push($("#pTemplate").css("opacity"));
+            $('.selectiondiv').each(function () {
+                data["fields"].push({
+                    widget_id:$(this).find('div.ui-widget-header').attr("id"),
+                    width:$(this).width(),
+                    height:$(this).height(),
+                    xpos:$(this).position().left - 150,
+                    ypos:$(this).position().top - 50,
+                    background_color:$(this).css("background-color"),
+                    background_opacity:$(this).css("opacity"),
+                    font_size:$(this).find('span').css("font-size"),
+                    font_family:$(this).find('span').css("font-family"),
+                    font_weight:$(this).find('span').css("font-weight"),
+                    font_color:$(this).find('span').css("color"),
+                    font_opacity:$(this).find('span').css("opacity")
+
+
+                })
+
+
+            });
+
+            $('.selectiondivexisting').each(function () {
+                data["fields"].push({
+                    widget_id:$(this).find('div.ui-widget-header').attr("id"),
+                    width:$(this).width(),
+                    height:$(this).height(),
+                    xpos:$(this).position().left,
+                    ypos:$(this).position().top,
+                    background_color:$(this).css("background-color"),
+                    background_opacity:$(this).css("opacity"),
+                    font_size:$(this).find('span').css("font-size"),
+                    font_family:$(this).find('span').css("font-family"),
+                    font_weight:$(this).find('span').css("font-weight"),
+                    font_color:$(this).find('span').css("color"),
+                    font_opacity:$(this).find('span').css("opacity")
+
+
+
+                })
+
+            });
+
+
+            $.ajax({
+                url:"<%= save_section_path %>",
+                type:"post",
+                data:JSON.stringify(data),
+                contentType:"application/json",
+                success:function (data) {
+                }
+            });
+        });
+
+        //the following code is to change the background color of the ptemplate
+        $('.slide_color').colorpicker().on('changeColor', function (ev) {
+            $('#pTemplate').css("background-color", ev.color.toHex());
+            var alpha = ev.color.value.a;
+            $('#pTemplate').css("opacity", alpha);
+            $('#background_field').attr("value", $('#pTemplate').css("background-color"));
+            $('#opacity_field').attr("value", $('#pTemplate').css("opacity"));
+            //alert($('#pTemplate').css("background-color"));
+
+
+        });
+
+        //the following code is to change the text color of the particular psection in action...
+
+    });
+</script>
+
+
+<div class="row">
+  <div class="side_panel">
+    <%= link_to image_tag('save.png'), "#", :class => "btn btn-inverse span1", :id => "save_button", :style => "margin-bottom:10px;" %>
+    <a href="#edit_ptemplate_modal" data-toggle="modal" class="btn btn-info span1" id="save_as_button" style="margin-bottom:10px;">Save
+      As</a>
+
+    <br>
+
+    <%= hidden_field_tag :background_color, "rgb(0,0,0)", :id => "background_field" %>
+    <%= hidden_field_tag :opacity, "1", :id => "opacity_field" %>
+    <div class="conf-buttons btn btn-primary">
+    <strong>Background Color:</strong>
+    <a href="#" class="input-append color slide_color btn btn-disabled" data-color="<%= @ptemplate.background %>" data-color-format="rgba" style="font-weight: bolder;font-size: 12px;width:60px;color:white;text-align: center">
+      <div class="add-on" style="margin-left:-6px;">
+        <i style="background-color: <%=  if @ptemplate.uses_background_image? then "rgb(0,0,0,1)" else @ptemplate.background end  %>;width:60px;"></i>
+      </div>
+    </a>
+    <br>
+    <br>
+    <br>
+    <!--use button for uploading background image-->
+    <a href="#background_image" class="btn btn-warning span1" data-toggle="modal">Image</a>
+    <br>
+    <br>
+    <% if @ptemplate.uses_background_image? %>
+        <%= link_to "Remove Image",remove_background_image_path(@ptemplate.id),:class=>"btn btn-danger" %>
+        <% end %>
+    </div>
+    <br>
+    <br>
+    <br>
+
+    <!--modal for background Image-->
+    <div class="modal fade" id="background_image">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3>Choose A background Image</h3>
+      </div>
+      <div class="modal-body">
+        <%= form_for(@photo, :url => use_background_image_path) do |f| %>
+            <%= hidden_field_tag :ptemplate_id, @ptemplate.id %>
+            <%= label_tag "Choose an Image" %>
+            <%= f.file_field :media_passet %>
+
+            </div>
+            <div class="modal-footer">
+              <a href="#" class="btn" data-dismiss="modal">Close</a>
+              <%= submit_tag "Use it !", :class => "btn btn-inverse" %>
+        <% end %>
+        </div>
+        </div>
+
+    <% @widgets.each do |widget| %>
+        <a href="#" class="btn btn-inverse span1 unselected" style="text-align: center;color: #ffffff;margin-bottom: 5px;" title="<%= widget.name %>" id="<%= widget.id %>"><%= widget.name %></a>
+        <br>
+
+    <% end %>
+  </div>
+
+  <% if @ptemplate.uses_background_image? %>
+      <% @style="background-image:url(#{@ptemplate.background})" %>
+  <% else %>
+      <% @style="background-color:#{@ptemplate.background}" %>
+  <% end %>
+  <div id="pTemplate" style="<%= @style %>">
+    <% @ptemplate.psections.each_with_index do |psection, index| %>
+        <div id="selection" class="selectiondivexisting ui-widget-content existing_psections" style="border-radius:5px;overflow:hidden;text-align:center;background-color: <%= psection.background %>;
+                position: absolute;
+                left: <%= psection.xpos %>px;
+                top:<%= psection.ypos %>px;
+                height: <%= psection.height %>px;
+                width: <%= psection.width %>px;
+        ">
+          <div class='ui-widget-header ' id=" <%= psection.pwidget_id %> ">
+            <%= Pwidget.find(psection.pwidget_id).name %>
+            <a href='#' onclick='$(this).parent().parent().remove();' class='pull-right' style='font-size: 12px;color:black;margin-right: 3px;'>x</a>
+
+            <div><%= render 'design_button', :id => psection.id %></div>
+          </div>
+          <br>
+          <br>
+          <!--this is a sample text we display if widget contains text-->
+          <% unless GlobalConstants::WIDGETS_WITHOUT_TEXT.include?(@matter.pwidget.name.downcase) %>
+              <span id="text_<%= psection.id %>" style="font-size: <%= psection.font_size %>px;color: <%= psection.font_color %>">Sample Text</span>
+          <% end %>
+          <% if psection.pwidget.name=="Sub-Ptemplate" %>
+              <a href="#add_content_form_<%= index %>" data-toggle="modal" data-backdrop="static" class="btn btn-info" style="font-weight: bolder;font-size: 18px;margin-top: <%= psection.height/2-18 %>px;">
+                + <%= psection.pwidget.name %>
+              </a>
+
+              <div class="modal fade" id="add_content_form_<%= index %>">
+                <div class="modal-header">
+                  <button class="close" data-dismiss="modal">×</button>
+                  <h3>Pick A Ptemplate</h3>
+                </div>
+                <div class="modal-body">
+                  <%= render :inline => psection.pwidget.builder, :locals => {current_psection_id:psection.id} %>
+                </div>
+                <div class="modal-footer">
+                  <a href="#" class="btn">Close</a>
+
+                </div>
+              </div>
+
+          <% end %>
+        </div>
+
+
+    <% end %>
+
+  </div>
+
+  <%#TODO: Add provision to upload an image which can be used as a backgrounf image. PLlease look at the tables, provisions are made so just form is to be added.  %>
+
+
+</div>
+
+
+<div class="modal fade" id="edit_ptemplate_modal" style="z-index:10000;">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+
+    <h3>New pTemplate</h3>
+  </div>
+  <div class="modal-body">
+    <%= form_tag :action => 'save_ptemplate' %>
+
+    <%= hidden_field_tag :ptemplate_id, @ptemplate.id %>
+    <%= label_tag :name %>
+    <%= text_field_tag :name, @ptemplate.name %>
+
+
+  </div>
+  <div class="modal-footer">
+    <%= submit_tag "SAVE", :class => "btn btn-info" %>
+    <a href="#" class="btn btn-danger" data-dismiss="modal">Close</a>
+  </div>
+</div>
+
+
+

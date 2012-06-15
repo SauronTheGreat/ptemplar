@@ -1,0 +1,12 @@
+<script type="text/javascript">
+    $(function () {
+        $('#behaving_<%= @pdata.id %>').parent().css("width", "<%= @width*0.95 %>px")
+        <% if @numlines<5 %>
+        $('#behaving_<%= @pdata.id %>').parent().prev().css("height", "<%= @height*1.5 %>px")
+        <% end %>
+
+    });
+</script>
+<div id="behaving_<%= @pdata.id %>" style="text-align: center;padding:<%= @paddingtop %>px;font-size: <%= @fontsize %>px;line-height:<%= @fontsize*1.05 %>px; ">
+ <%= raw(@pdata.data) %>
+</div>

@@ -1,0 +1,10 @@
+<%= form_tag update_presentation_slide_path(@presentation) %>
+<% @pslides.each do |pslide| %>
+    <%= check_box_tag pslide.id,pslide.id,0 %>
+    <%= pslide.id %>
+    <br>
+
+
+<% end %>
+
+<%= submit_tag %>

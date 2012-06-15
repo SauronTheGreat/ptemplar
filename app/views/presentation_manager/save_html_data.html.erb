@@ -1,0 +1,57 @@
+<% if @pslide.pbackground %>
+    <% @smatter_background=@pslide.pbackground.split('|')[0] %>
+    <% @smatter_alpha=@pslide.pbackground.split('|')[1] %>
+<% end %>
+
+<div id="pslide_display_back" style="background-color: <%= @smatter_background %>;opacity: <%= @smatter_alpha %>">
+
+  <% unless @pslide.pfile_file_name.nil? %>
+      <%= image_tag @pslide.pfile, :style => "position:absolute;width:960px;height:600px;" %>
+  <% end %>
+
+</div>
+<div id="pslide_display">
+  <div>
+
+    <% @pslide.ptemplate.sections.each_with_index do |section, index| %>
+        <% if section.pcontents.where('pslide_id=?', @pslide.id).blank? %>
+            <div class="no_pcontents" style="text-align: center;position: absolute;border-radius: 5px;border:1px solid black;left:<%= section.xpos %>px;top:<%= section.ypos %>px;height:<%= section.height %>px;width:<%= section.width %>px">
+              <a href="#add_content_form_<%= index %>" data-toggle="modal" data-backdrop="static" class="btn btn-info" style="font-weight: bolder;font-size: 18px;margin-top: <%= section.height/2-18 %>px;">
+                + <%= section.widget.name %>
+              </a>
+            </div>
+            </div>
+        <% end %>
+        </div>
+
+        <% @matter=@pslide.pcontents.where('section_id=?', section).first %>
+        <% if @matter %>
+
+            <% if @matter.pbackground %>
+                <% @matter_background=@matter.pbackground.split('|')[0] %>
+                <% @matter_alpha=@matter.pbackground.split('|')[1] %>
+                <% @matter_color=@matter.pbackground.split('|')[2] %>
+            <% end %>
+            <div id="<%= @matter.id %>" class="colored_div" style="border-radius:<%= [section.width/30,10].min %>px;background-color:<%= @matter_background %>;opacity:<%= @matter_alpha %>;position: absolute;left:<%= section.xpos %>px;top:<%= section.ypos %>px;height:<%= section.height %>px;width:<%= section.width %>px">
+            </div>
+            <div style="color:<%= @matter_color %>;padding:9px;position: absolute;left:<%= section.xpos %>px;top:<%= section.ypos %>px;height:<%= section.height %>px;width:<%= section.width %>px">
+
+              <div class="design_buttons">
+
+
+              </div>
+              <% @psection=section %>
+              <% @widget=@matter.section.widget %>
+              <% unless @behavior=@matter.behavior %>
+                  <% @behavior=@widget.behaviors.first %>
+              <% end %>
+              <% @renderer = "<"+"%= render_cell :#{@widget.name.downcase},
+                                                :#{@behavior.name.downcase},
+                                                :pcontents => @matter,
+                                                :width => @psection.width,
+                                                :height => @psection.height %"+">" %>
+              <%= render :inline => @renderer %>
+        <% end %>
+        </div>
+    <% end %>
+

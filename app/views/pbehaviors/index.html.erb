@@ -1,0 +1,31 @@
+<h1>Listing pbehaviors</h1>
+
+<table>
+  <tr>
+    <th>Pcontent</th>
+    <th>Prev pcontent</th>
+    <th>Pevent</th>
+    <th>Pfragment</th>
+    <th>Delay</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @pbehaviors.each do |pbehavior| %>
+  <tr>
+    <td><%= pbehavior.pcontent_id %></td>
+    <td><%= pbehavior.prev_pcontent_id %></td>
+    <td><%= pbehavior.pevent_id %></td>
+    <td><%= pbehavior.pfragment_id %></td>
+    <td><%= pbehavior.delay %></td>
+    <td><%= link_to 'Show', pbehavior %></td>
+    <td><%= link_to 'Edit', edit_pbehavior_path(pbehavior) %></td>
+    <td><%= link_to 'Destroy', pbehavior, confirm: 'Are you sure?', method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Pbehavior', new_pbehavior_path %>

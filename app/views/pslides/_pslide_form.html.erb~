@@ -1,0 +1,289 @@
+<script type="text/javascript">
+    $(function () {
+
+        $(".edit_button").click(function () {
+
+            $.get("/pslides/" + $(this).attr("id") + "/edit", function (data) {
+                $("#edit_form .modal-body").html(data);
+            });
+
+        });
+
+    });
+
+</script>
+
+
+<div id="pslide_display_back" style="background-color: <%= @smatter_background %>;opacity: <%= @smatter_alpha %>">
+
+  <% unless @pslide.pfile_file_name.nil? %>
+      <%= image_tag @pslide.pfile, :style => "position:absolute;width:960px;height:600px;" %>
+  <% end %>
+
+</div>
+<div id="pslide_display">
+<div>
+
+<% @pslide.ptemplate.sections.each_with_index do |section, index| %>
+    <% if section.pcontents.where('pslide_id=?', @pslide.id).blank? %>
+        <div class="no_pcontents" style="text-align: center;position: absolute;border-radius: 5px;border:1px solid black;left:<%= section.xpos %>px;top:<%= section.ypos %>px;height:<%= section.height %>px;width:<%= section.width %>px">
+          <a href="#add_content_form_<%= index %>" data-toggle="modal" data-backdrop="static" class="btn btn-info" style="font-weight: bolder;font-size: 18px;margin-top: <%= section.height/2-18 %>px;">
+            + <%= section.widget.name %>
+          </a>
+        </div>
+        <% @pcontent[index]=Pcontent.new %>
+        <div id="add_content_form_<%= index %>" class="modal hide fade" style="z-index: 99999; width:80%; height:80%; margin-left: -40%;">
+          <div class="modal-header">
+            <a class="close" data-dismiss="modal"> &times; </a>
+
+            <h2>Add <%= section.widget.name %></h2>
+          </div>
+          <%= form_for @pcontent[index], :html => {:multipart => true} do |f| %>
+              <div class="modal-body">
+                <div class="clearfix">
+                  <%= f.hidden_field :section_id, :value => section.id %>
+                  <%= f.hidden_field :pslide_id, :value => @pslide.id %>
+                  <div class="input">
+                    <% case section.widget.name %>
+                    
+                    
+                    <% when "Audio" %>
+                        
+                    <% when "Clickbullet" %>
+                        <div>
+                          <% 10.times do %>
+                              <% aphoto = @pcontent[index].photos.build %>
+                              <% aphoto.captions.build %>
+                          <% end %>
+                          <%= f.fields_for :photos do |photo| %>
+                              Add Image:    <%= photo.file_field :image %>
+                              <%= photo.fields_for :captions do |caption| %>
+                                  <% if caption.object.new_record? %>
+                                      Add Text: <%= caption.text_field :caption, :class => 'span5' %>
+                                  <% end %>
+                              <% end %>
+                              <br/>
+                          <% end %>
+                        </div>
+                    <% when "Slidecard" %>
+                        <div>
+                          <% @pcontent[index].photos.build %>
+                          <div class="newPaperclipFiles">
+                            <%= f.fields_for :photos do |photo| %>
+                                <% if photo.object.new_record? %>
+                                    Add Image:    <%= photo.file_field :image %>
+                                <% end %>
+                            <% end %>
+                          </div>
+
+                          <div class="existingPaperclipFiles">
+                            <% f.fields_for :photos do |photo| %>
+                                <% unless photo.object.new_record? %>
+                                    <div class="thumbnail">
+                                      Change
+                                      Image:   <%= link_to(image_tag(photo.object.image.url(:thumb)), photo.object.image.url(:original)) %>
+                                      <%= photo.check_box :_delete %>
+                                    </div>
+                                <% end %>
+                            <% end %>
+                          </div>
+                          Add Text: <%= f.text_field :pdata, :class => 'span5' %>
+                        </div>
+                    <% when "Modal" %>
+                        <div>
+                          <% @pcontent[index].photos.build %>
+                          <div class="newPaperclipFiles">
+                            <%= f.fields_for :photos do |photo| %>
+                                <% if photo.object.new_record? %>
+                                    Add Image:    <%= photo.file_field :image %>
+                                <% end %>
+                            <% end %>
+                          </div>
+
+                          <div class="existingPaperclipFiles">
+                            <% f.fields_for :photos do |photo| %>
+                                <% unless photo.object.new_record? %>
+                                    <div class="thumbnail">
+                                      Change
+                                      Image:   <%= link_to(image_tag(photo.object.image.url(:thumb)), photo.object.image.url(:original)) %>
+                                      <%= photo.check_box :_delete %>
+                                    </div>
+                                <% end %>
+                            <% end %>
+                          </div>
+                          <% @htmlid= "htmlarea_"+ index.to_s %>
+                          <script type="text/javascript">
+                              $(function () {
+                                  $('#<%= @htmlid %>').tinymce({
+                                      theme:'advanced'
+                                  });
+                              });
+                          </script>
+                          <%= f.text_area :pdata, :style => 'width:97%;height:300px;', :id => @htmlid %>
+                        </div>
+                    <% when "Html" %>
+                        <div>
+                          <% @htmlid= "htmlarea_"+ index.to_s %>
+                          <script type="text/javascript">
+                              $(function () {
+                                  $('#<%= @htmlid %>').tinymce({
+                                      theme:'advanced'
+                                  });
+                              });
+                          </script>
+                          <%= f.text_area :pdata, :style => 'width:97%;height:300px;', :id => @htmlid %>
+                        </div>
+                    <% when "Youtube" %>
+                        <div>
+                          Put in a Youtube embed link
+                          <%= f.text_field :pdata, :class => 'span5' %>
+                        </div>
+                    <% when "Title" %>
+                        <div>
+                          <%= f.text_field :pdata, :class => 'span5' %>
+                        </div>
+                    <% when "Textline" %>
+                        <div>
+                          <%= f.text_field :pdata, :class => 'span5' %>
+                        </div>
+                    <% when "Gallery" %>
+                        <div>
+                          <% 10.times do %>
+                              <% aphoto = @pcontent[index].photos.build %>
+                              <% aphoto.captions.build %>
+                          <% end %>
+                          <%= f.fields_for :photos do |photo| %>
+                              Add Image:    <%= photo.file_field :image %>
+                              <%= photo.fields_for :captions do |caption| %>
+                                  <% if caption.object.new_record? %>
+                                      Add Text: <%= caption.text_field :caption, :class => 'span5' %>
+                                  <% end %>
+                              <% end %>
+                              <br/>
+                          <% end %>
+                        </div>
+                    <% when "Accordion" %>
+                        <div>
+                          Add Accordion data in the format (Title | HTML)
+                          <br/>
+                          <% 50.times do %>
+                              <% aphoto = @pcontent[index].entries.build %>
+                          <% end %>
+                          <%= f.fields_for :entries do |entry| %>
+                              <% if entry.object.new_record? %>
+                                  Data: <%= entry.text_area :pmatter, :rows => 3, :class => 'span5' %>
+                              <% end %>
+                              <br/>
+                          <% end %>
+                        </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <div>
+                  <%= f.submit "Submit", :class => "btn btn-warning btn-large" %>
+                </div>
+              </div>
+          <% end %>
+        </div>
+    <% else %>
+
+        <% @matter=@pslide.pcontents.where('section_id=?', section).first %>
+        <% if @matter.pbackground %>
+            <% @matter_background=@matter.pbackground.split('|')[0] %>
+            <% @matter_alpha=@matter.pbackground.split('|')[1] %>
+            <% @matter_color=@matter.pbackground.split('|')[2] %>
+        <% end %>
+        <div id="<%= @matter.id %>" class="colored_div" style="border:1px solid black;border-radius:<%= [section.width/30,10].min %>px;background-color:<%= @matter_background %>;opacity:<%= @matter_alpha %>;position: absolute;left:<%= section.xpos %>px;top:<%= section.ypos %>px;height:<%= section.height %>px;width:<%= section.width %>px">
+        </div>
+        <div style="color:<%= @matter_color %>;padding:9px;position: absolute;left:<%= section.xpos %>px;top:<%= section.ypos %>px;height:<%= section.height %>px;width:<%= section.width %>px">
+
+          <div class="design_buttons">
+            <%= link_to "X", @matter, confirm: 'Are you sure?', method: :delete, :class => "btn btn-success", :style => "position:absolute;bottom:0px;" %>
+            <a href="#" class="input-append color section_color" data-color="<%= @matter_background %>" data-color-format="rgba" style="position: absolute;right:30px;bottom:-5px;" title="Set Background Color">
+              <div class="add-on">
+                <i style="background-color: <%= @matter_background %>;"></i>
+              </div>
+            </a>
+            <% unless @matter.pdata=="Image" %>
+                <a href="#" class="input-append color text_color" data-color="<%= @matter_color %>" data-color-format="rgb" style="position: absolute;right: 60px;bottom:-5px;" title="Set Text Color">
+                  <div class="add-on">
+                    <i style="background-color: <%= @matter_color %>;"></i>
+                  </div>
+                </a>
+            <% end %>
+            <a href="#edit_form" data-toggle="modal" data-backdrop="static" class="btn btn-warning edit_button" style="position:absolute;left:42px;bottom:0" id=<%= @matter.id %>>E</a>
+
+            <!--*********************************************************************-->
+
+            <div class="behavior_button">
+              <a href="#add_behavior_form_<%= index %>" data-toggle="modal" data-backdrop="static" class="btn btn-info" style="position:absolute;bottom:0px;margin-left:67px">
+                B
+              </a>
+            </div>
+
+            <div id="add_behavior_form_<%= index %>" class="modal hide fade" style="z-index: 99999">
+              <div class="modal-header">
+                <a class="close" data-dismiss="modal"> &times; </a>
+
+                <h2>Behavior</h2>
+              </div>
+              <%= form_for @matter do |f| %>
+                  <div class="modal-body">
+                    <div class="clearfix">
+                      <div class="input">
+                        <%= f.select :behavior_id, options_from_collection_for_select(@matter.section.widget.behaviors, "id", "name", 1) %>
+                        Start Delay: <%= f.text_field :pvar %>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <div>
+                      <%= f.submit "Submit", :class => "btn btn-warning btn-large" %>
+                    </div>
+                  </div>
+              <% end %>
+            </div>
+
+            <!--*********************************************************************-->
+
+
+            <!--edit form-->
+            <!--*********************************************************************-->
+
+            <div id="edit_form" class="modal hide fade" style="z-index: 99999">
+              <div class="modal-header">
+                <a class="close" data-dismiss="modal"> &times; </a>
+
+                <h2>Pslide Details</h2>
+              </div>
+              <div class="modal-body">
+
+                hello
+              </div>
+            </div>
+
+
+            <!--*********************************************************************-->
+
+
+          </div>
+          <% @psection=section %>
+          <% @widget=@matter.section.widget %>
+          <% unless @behavior=@matter.behavior %>
+              <% @behavior=@widget.behaviors.first %>
+          <% end %>
+          <% @renderer = "<"+"%= render_cell :#{@widget.name.downcase},
+                                                :#{@behavior.name.downcase},
+                                                :pcontents => @matter,
+                                                :width => @psection.width,
+                                                :height => @psection.height %"+">" %>
+          <%= render :inline => @renderer %>
+        </div>
+    <% end %>
+<% end %>
+
+
+</div>
+</div>

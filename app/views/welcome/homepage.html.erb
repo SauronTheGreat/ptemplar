@@ -1,0 +1,135 @@
+<%= content_for :head do %>
+    <style>
+
+        li {
+            list-style: none;
+            padding: 5px;
+            padding-left: 20px;
+            background: #0c0c0c;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        li a {
+            color: white;
+        }
+
+        li a:hover {
+            text-decoration: none;
+            font-weight: bolder;
+            color: white;
+            text-shadow: 4px 0 8px #600, -4px 0 8px #006;
+        }
+
+        .mini-slide {
+
+            background: rgb(206, 220, 231); /* Old browsers */
+            background: -moz-radial-gradient(center, ellipse cover, rgb(206, 220, 231) 0%, rgb(89, 106, 114) 100%); /* FF3.6+ */
+            background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgb(206, 220, 231)), color-stop(100%, rgb(89, 106, 114))); /* Chrome,Safari4+ */
+            background: -webkit-radial-gradient(center, ellipse cover, rgb(206, 220, 231) 0%, rgb(89, 106, 114) 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-radial-gradient(center, ellipse cover, rgb(206, 220, 231) 0%, rgb(89, 106, 114) 100%); /* Opera 12+ */
+            background: -ms-radial-gradient(center, ellipse cover, rgb(206, 220, 231) 0%, rgb(89, 106, 114) 100%); /* IE10+ */
+            background: radial-gradient(center, ellipse cover, rgb(206, 220, 231) 0%, rgb(89, 106, 114) 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#cedce7', endColorstr = '#596a72', GradientType = 1); /* IE6-9 fallback on horizontal gradient */
+
+            width: 192px;
+            height: 120px;
+            position: relative;
+            border: solid 1px;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+    </style>
+
+<% end %>
+
+
+<div class="row-fluid" style="padding: 20px;margin-top: 10px;border-radius: 20px">
+  <div class="span4"><%= link_to "Go Pro !!",ptemplates_path,:class=>"btn btn-success btn-large" %></div>
+  </div>
+<div class="row-fluid">
+
+
+  <div class="span5" style="background:orange;padding:20px; margin-top: 30px; border-radius: 10px;">
+    <h1>Your Presentations   <small>(<%= @presentations.count %>)</small></h1>
+
+    <br/>
+    <ul>
+      <h2>
+        <a href="#new_prez_form" data-toggle="modal" data-backdrop="static" class="btn btn-inverse btn-large" style="border-radius: 5px;color:white">New
+          Presentation</a></h2><br/>
+      <% @presentations.each do |prez| %>
+          <li>
+            <h3>
+             <span style="color: #ffffff;"> <%= prez.name %></span>
+              <%= link_to "view Presentation", view_presentation_path(prez) ,:class=>"btn btn-primary"%>
+              <%= link_to 'download', package_as_html_path(prez.id),:class => "btn btn-warning" %>
+              <%= link_to 'x', prez, confirm: 'Are you sure?', method: :delete ,:class=>"btn btn-danger pull-right"%>
+            </h3>
+          </li>
+      <% end %>
+    </ul>
+
+    <!-- New Presentation Modal-->
+
+    <div id="new_prez_form" class="modal hide fade">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"> &times; </a>
+
+        <h2 style="padding: 5px; text-align: left;">New Presentation</h2>
+      </div>
+      <div class="modal-body">
+        <%= render 'presentations/form' %>
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="span5" style="background:#0e90d2;padding:20px; margin-top: 30px; border-radius: 10px;">
+    <h1>Your Slide Catalogue: <small>(<%= @pslides.count %>)</small></h1>
+    <br/>
+    <ul>
+      <h2>
+        <a href="#new_slide_form" data-toggle="modal" data-backdrop="static" id="new_pslide" class="btn btn-inverse btn-large" style="border-radius: 5px;color:#ffffff;">New
+          Slide</a></h2><br/>
+
+
+
+
+
+      <% @pslides.each do |slide| %>
+          <li>
+            <h3>
+             <span style="color: #ffffff;">   <%= slide.name %></span>
+              <%= link_to "View PSlide", pslide_path(slide),:class=>"btn btn-warning" %>
+              <%= link_to 'x', slide, confirm: 'Are you sure?', method: :delete, :class => "pull-right btn btn-danger" %>
+
+            </h3>
+          </li>
+      <% end %>
+    </ul>
+
+    <!-- New Pslide Modal-->
+
+    <%#TODO:remove the modal and redirect to a new page .%>
+
+    <%#TODO: In the new page ,user should be able to search by groups,component count   %>
+    <div id="new_slide_form" class="modal hide fade" style="width:82%;margin-left:-40%;">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"> &times; </a>
+
+        <h2 style="padding: 5px; text-align: left;">Pick a Ptemplate</h2>
+      </div>
+      <div class="modal-body" style="overflow: auto;height:310px; ">
+        <%= render :partial=>'pslides/form',:locals=>{:ps=>1} %>
+      </div>
+  <div class="modal-footer">
+    <a class="btn btn-warning btn-large" data-dismiss="modal"> Cancel </a>
+  </div>
+  </div>
+  </div>
+</div>
+
+
