@@ -92,7 +92,7 @@
     <br/>
     <ul>
       <h2>
-        <a href="#new_slide_form" data-toggle="modal" data-backdrop="static" id="new_pslide" class="btn btn-inverse btn-large" style="border-radius: 5px;color:#ffffff;">New
+        <a href="pslides/new" id="new_pslide" class="btn btn-inverse btn-large" style="border-radius: 5px;color:#ffffff;">New
           Slide</a></h2><br/>
 
 
@@ -116,19 +116,7 @@
     <%#TODO:remove the modal and redirect to a new page .%>
 
     <%#TODO: In the new page ,user should be able to search by groups,component count   %>
-    <div id="new_slide_form" class="modal hide fade" style="width:82%;margin-left:-40%;">
-      <div class="modal-header">
-        <a class="close" data-dismiss="modal"> &times; </a>
 
-        <h2 style="padding: 5px; text-align: left;">Pick a Ptemplate</h2>
-      </div>
-      <div class="modal-body" style="overflow: auto;height:310px; ">
-        <%= render :partial=>'pslides/form',:locals=>{:ps=>1} %>
-      </div>
-  <div class="modal-footer">
-    <a class="btn btn-warning btn-large" data-dismiss="modal"> Cancel </a>
-  </div>
-  </div>
   </div>
 </div>
 
