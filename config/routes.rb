@@ -17,7 +17,7 @@ PtemplarUpdatedv1::Application.routes.draw do
   resources :pslides
   resources :pcontents
   resources :presentations
-
+  resources :groups
   resources :presentations_pslides
 
 
@@ -69,7 +69,10 @@ PtemplarUpdatedv1::Application.routes.draw do
   match "update_list/:presentation_id"=>"presentation_manager#update_list",:as=>"update_list"
 
   #################################################################################################################
-
+  match 'new_group' => 'groups#new'
+  match 'add_to_group' => 'ptemplate_manager#add_to_group'
+  match "search_category"=>"pslides#search_category"
+  match "search_by_group"=>"pslides#search_by_group"
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

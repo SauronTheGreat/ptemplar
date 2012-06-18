@@ -1,7 +1,73 @@
-<h1>New pslide</h1>
+<script type="text/javascript">
+    $(function () {
+        $(':checkbox').click (function ()
+        {
+            var thisCheck = $(this);
+            var dataString="";
+            $(':checkbox').each(function(){
+                if ($(this).is(':checked')) {
+                    dataString=dataString+$(this).attr("id")+"a";
+                }
+            }) ;
+           $.get("<%= search_category_path %>?data="+dataString,function(data){
+                                $("#list").html(data);
+           }) ;
+        });
 
-<div style="background-color: white;position: absolute;left:100px;top:100px;height: 300px;width: 300px;padding: 30px">
-  <%= render 'form' %>
+//        $("select").click(function () {
+//            var thisCheck = $(this);
+//            var dataString="";
+//            alert("hey")
+//            $('select option:selected').each(function(){
+//                    //dataString=dataString+$(this).selected+"a";
+//                    alert(thisCheck.selected)
+//
+//            }) ;
+//        });
 
+        $("select").change(function () {
+                  var str = "";
+                  $("select option:selected").each(function () {
+                        str =str+$(this).val()+"*";
+                  });
+                 //alert(str)
+                 $.get("<%= search_by_group_path %>?data="+str,function(data){
+                        $("#list").html(data);
+                 }) ;
+
+                //.trigger('change');
+        });
+
+    });
+</script>
+
+<br/><h1>New pslide</h1>
+
+<div style="background-color: white;position: absolute;left:25px;top:100px;height: 300px;width: 120px;padding: 30px">
+  <h2>Search</h2>
+
+      <% Pwidget.all.each do |pwidget| %>
+        <%= check_box_tag pwidget.id  %>
+        <%= pwidget.name %><br/>
+
+  <% end %>
 </div>
-<%= link_to 'Back', pslides_path %>
+<div style="background-color: white;position: absolute;left:25px;top:480px;height: 100px;width: 120px;padding: 30px">
+    <h4>Search By Group</h4>
+    <select style="width:120px;" multiple="true">
+    <%Group.all.each do |group|%>
+    <option>
+      <% group.id %>
+      <%= group.name %>
+    </option>
+    <%end%>
+
+    </select>
+</div>
+
+
+<div id="list" style="background-color: white;position: absolute;left:250px;top:100px;height: 300px;width: 900px;padding: 30px">
+  <%= render 'form' %>
+</div>
+
+<%= link_to 'Back', homepage_path %>

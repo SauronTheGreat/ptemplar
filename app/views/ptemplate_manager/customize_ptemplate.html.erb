@@ -234,6 +234,8 @@
         </div>
         </div>
 
+    <a href="#add_to_group_modal" data-toggle="modal" class="btn btn-info span1" id="add_to_group" style="text-align: center;color: #ffffff;margin-bottom: 5px;width: 82px;">ADD GROUP</a>
+
     <% @widgets.each do |widget| %>
         <a href="#" class="btn btn-inverse span1 unselected" style="text-align: center;color: #ffffff;margin-bottom: 5px;" title="<%= widget.name %>" id="<%= widget.id %>"><%= widget.name %></a>
         <br>
@@ -299,7 +301,6 @@
 
 </div>
 
-
 <div class="modal fade" id="edit_ptemplate_modal" style="z-index:10000;">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
@@ -307,7 +308,7 @@
     <h3>New pTemplate</h3>
   </div>
   <div class="modal-body">
-    <%= form_tag :action => 'save_ptemplate' %>
+    <%= form_tag :action => 'save_ptemplate' do %>
 
     <%= hidden_field_tag :ptemplate_id, @ptemplate.id %>
     <%= label_tag :name %>
@@ -317,9 +318,31 @@
   </div>
   <div class="modal-footer">
     <%= submit_tag "SAVE", :class => "btn btn-info" %>
+    <% end %>
     <a href="#" class="btn btn-danger" data-dismiss="modal">Close</a>
   </div>
 </div>
 
+<div class="modal fade" id="add_to_group_modal" style="z-index:10000;">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+
+    <h3>Add to Group</h3>
+  </div>
+
+  <div class="modal-body">
+    <%= form_tag :action => 'add_to_group' do %>
+    <%= hidden_field_tag :ptemplate_id, @ptemplate.id %>
+    <%= label_tag :select_group %>
+    <%= select_tag :select_group, options_for_select(Group.find(:all).collect{ |g| [g.name, g.id]}), {:multiple => true} %>
+    <%= link_to 'Create New Group', new_group_path%>
+  </div>
+
+  <div class="modal-footer">
+    <%= submit_tag "SAVE", :class => "btn btn-info" %>
+    <% end %>
+    <a href="#" class="btn btn-danger" data-dismiss="modal">Close</a>
+  </div>
+</div>
 
 

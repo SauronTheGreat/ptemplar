@@ -244,5 +244,27 @@ class PslidesController < ApplicationController
 
   end
 
+  def search_category
+
+      ids=params[:data].split("a")
+      @ptemplates=Ptemplate.all
+      ids.each do |id|
+        @ptemplates=@ptemplates & Pwidget.find(id).ptemplates
+
+      end
+
+      @pslide=Pslide.new
+
+    end
+
+  def search_by_group
+      names=params[:data].split("*")
+      @ptemplates=Ptemplate.all
+      names.each do |name1|
+        @ptemplates=@ptemplates & Group.find_by_name(name1).ptemplates
+        #render :text => "asadas"
+      end
+      @pslide=Pslide.new
+  end
 
 end

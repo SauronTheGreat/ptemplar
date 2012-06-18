@@ -70,6 +70,13 @@ class PtemplateManagerController < ApplicationController
       @section.save!
     end
 
+    @ptemplate.pwidgets.destroy_all
+         @ptemplate.psections.each do |psection|
+
+            @ptemplate.pwidgets << Pwidget.find(psection.pwidget_id)
+         end
+
+
     #kit = IMGKit.new(html, :quality => 50)
     #kit = IMGKit.new(File.new('/path/to/html'))
     #kit.stylesheets << '/assets'
@@ -141,5 +148,15 @@ class PtemplateManagerController < ApplicationController
     redirect_to customize_ptemplate_path(@ptemplate)
   end
 
+  def add_to_group
+      #render :text => params
+      #return
+      @ptemplate=Ptemplate.find(params[:ptemplate_id])
+      params[:select_group].each do |group|
+        @ptemplate.groups << Group.find(group.to_i)
+      end
+      redirect_to customize_ptemplate_path(@ptemplate)
+      #return
+    end
 
 end

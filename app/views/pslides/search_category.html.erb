@@ -1,0 +1,38 @@
+<link href="/assets/pslidecss/pslide.css.scss" media="screen" rel="stylesheet" type="text/css"/>
+<style>
+    html, body {
+        background-image: url('/assets/background.jpg');
+    }
+</style>
+
+<%= form_for(@pslide) do |f| %>
+
+
+    <% if defined? locals %>
+        <%= hidden_field_tag :prez_id, locals[:prez_id] %>
+        <% end %>
+    <%= f.hidden_field :user_id, :value => current_user.id %>
+    <h2>Pick a Template</h2>
+
+    <br/>
+
+
+    <% @ptemplates.each do |ptemplate| %>
+
+        <div class="field" style="float:left;margin-right: 10px;">
+          <%= f.radio_button :ptemplate_id, ptemplate.id %>
+          <%= ptemplate.name %>
+          <div class="mini-slide">
+            <% ptemplate.psections.each do |section| %>
+                <div style="background-color:#ffffff ;line-height: 10px;border-radius: 2px;text-align:center;font-size:10px;padding:0px;border:solid 1px;;position:absolute;left:<%=section.xpos.to_i/5%>px;top:<%= section.ypos.to_i/5 %>px;width:<%= section.width.to_i/5 %>px;height:<%= section.height.to_i/ 5 %>px">
+                  <div style="margin-top: 3px;"><%= section.pwidget.name %></div>
+                </div>
+            <% end %>
+          </div>
+
+        </div>
+    <% end %>
+    <div class="actions">
+      <%= f.submit "SUBMIT",:class=>"btn btn-info"%>
+    </div>
+<% end %>
